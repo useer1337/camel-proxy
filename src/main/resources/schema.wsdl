@@ -1,0 +1,660 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.rt-eu.ru/med/er/v2_0" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Fer3NService_REGP" targetNamespace="http://www.rt-eu.ru/med/er/v2_0">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.rt-eu.ru/med/er/v2_0">
+            <xs:element name="GetPatientInfoRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Patient_Data" type="tns:Patient_Data"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Pass_referral" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Patient_Data">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="OMS_Number" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="OMS_Series" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="SNILS" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="First_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Last_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Middle_Name" type="xs:string"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Birth_Date" type="xs:date"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Sex" type="tns:Sex"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Phone" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="Sex">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="F"/>
+                    <xs:enumeration value="M"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetPatientInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error_Type"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Patient_Id" type="xs:string"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Referrals" type="tns:Referrals"/>
+                        </xs:choice>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Registration_OID" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Error_Type">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Error_Code" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Error_Message" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Validation_Error" type="tns:Validation_Error_Type"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Validation_Error_Type">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Message" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Path" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Value" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Referrals">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Referral" type="tns:Param_Of_Referral"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Param_Of_Referral">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Referral_Id" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Referral_Number" type="xs:string"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Referral_Type" type="xs:int"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Referral_Start_Date" type="xs:date"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Referral_End_Date" type="xs:date"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Payment_Source_Id" type="xs:int"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="To_MO_OID" type="xs:string"/>
+                    <xs:choice minOccurs="1" maxOccurs="1">
+                        <xs:element minOccurs="0" maxOccurs="1" name="To_Service_Post" type="tns:Service_Post"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="To_Service_Specialty" type="tns:Service_Specialty"/>
+                    </xs:choice>
+                    <xs:element minOccurs="0" maxOccurs="1" name="To_Resource_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="To_Resource_Snils" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Desease" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Note" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="From_MO_OID" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="From_Post" type="tns:Post"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="From_Resource_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="From_Resource_Snils" type="xs:string"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Available_Record" type="tns:Available_Record"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Reason_Not_Available" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Service_Post">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Post" type="tns:Post"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Services_Info" type="tns:Services_Info"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Post">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Post_Id" type="xs:integer"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Add_Info_Post" type="tns:Add_Info_Post"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Post_State" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Post_Comment" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Add_Info_Post">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Inner_Id" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Inner_Name" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Services_Info">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Complex_Service_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Complex_Service_Id" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Service" type="tns:Service"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Service">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Service_Id" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Add_Info_Service" type="tns:Add_Info_Service"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Add_Info_Service">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Inner_Id" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Inner_Name" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Service_Specialty">
+                <xs:sequence>
+                    <xs:element minOccurs="1" maxOccurs="1" name="Specialty_Id" type="xs:int"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Services_Info" type="tns:Services_Info"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="Available_Record">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="AVAILABLE"/>
+                    <xs:enumeration value="AVAILABLE_ONLY_RECEPTION"/>
+                    <xs:enumeration value="AVAILABLE_ONLY_DOCTOR"/>
+                    <xs:enumeration value="NO_APPOINTMENT"/>
+                    <xs:enumeration value="UNAVAILABLE"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetReferralInfoRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Patient_Data" type="tns:Patient_Data"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Referral_Number" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetReferralInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error_Type"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Patient_Id" type="xs:string"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Referrals" type="tns:Referrals"/>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetMOInfoExtendedRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Posts" type="tns:Service_Posts"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Specialty" type="tns:Service_Specialty"/>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Service_Posts">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Post" type="tns:Post"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Services_Info" type="tns:Services_Info"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetMOInfoExtendedResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error_Type"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="MO_List">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element minOccurs="0" maxOccurs="unbounded" name="MO" type="tns:MO_Param_Age"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="MO_Param_Age">
+                <xs:complexContent mixed="false">
+                    <xs:extension base="tns:MO_Param">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Age_Group" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="MO_Param">
+                <xs:complexContent mixed="false">
+                    <xs:extension base="tns:MO_Base">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" maxOccurs="1" name="MO_Address" type="xs:string"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="MO_Phone" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="MO_Base">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="MO_Id" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="MO_OID" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="MO_Name" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetMOResourceInfoRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Posts" type="tns:Service_Posts"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Specialty" type="tns:Service_Specialty"/>
+                        </xs:choice>
+                        <xs:element minOccurs="0" maxOccurs="1" name="MO_OID_List" type="tns:ArrayOfString"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Referral_Id" type="xs:string"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Start_Date_Range" type="xs:date"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="End_Date_Range" type="xs:date"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Referral" type="tns:Param_Of_Referral"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Patient_Data" type="tns:Patient_Data"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ArrayOfString">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="MO_OID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetMOResourceInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error_Type"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="MO_Resource_List" type="tns:MO_Resource_List"/>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="MO_Resource_List">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="MO_Available" type="tns:MO_Available"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MO_Available">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="MO" type="tns:MO_Param_Age"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Resource_Available" type="tns:ArrayOfResource_Param"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfResource_Param">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Resource" type="tns:Resource_Param"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Resource_Param">
+                <xs:sequence>
+                    <xs:choice minOccurs="1" maxOccurs="1">
+                        <xs:element minOccurs="0" maxOccurs="1" name="Room" type="tns:Room_Param"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Specialist" type="tns:Specialist_Param"/>
+                    </xs:choice>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Available_Dates" type="tns:ArrayOfDateTime"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Age_Group" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Room_Param">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Room_OID" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Room_Number" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Room_Name" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Specialist_Param">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Last_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="First_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Middle_Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="SNILS" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Post" type="tns:Post"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfDateTime">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Available_Date" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetServicePostSpecsInfoRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="MO_Id" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetServicePostSpecsInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error_Type"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Post_Specs" type="tns:Service_Post_Specs"/>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Service_Post_Specs">
+                <xs:sequence>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                        <xs:element minOccurs="0" maxOccurs="1" name="Service_Post" type="tns:Service_Post"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Service_Specialty" type="tns:Service_Specialty"/>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetScheduleInfoRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Room_OID" type="xs:string"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Specialist_SNILS" type="xs:string"/>
+                        </xs:choice>
+                        <xs:element minOccurs="0" maxOccurs="1" name="MO_OID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Post" type="tns:Service_Post"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Service_Specialty" type="tns:Service_Specialty"/>
+                        </xs:choice>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Referral_Id" type="xs:string"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Start_Date_Range" type="xs:date"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="End_Date_Range" type="xs:date"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Start_Time_Range" type="xs:time"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="End_Time_Range" type="xs:time"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetScheduleInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:choice minOccurs="1" maxOccurs="1">
+                            <xs:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error_Type"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Schedule">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element minOccurs="0" maxOccurs="unbounded" name="Slots">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element minOccurs="0" maxOccurs="1" name="Slot_Id" type="xs:string"/>
+                                                    <xs:element minOccurs="1" maxOccurs="1" name="VisitTime" type="xs:dateTime"/>
+                                                    <xs:element minOccurs="0" maxOccurs="1" name="Room" type="xs:string"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CreateAppointmentRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Slot_Id" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CreateAppointmentResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Session_ID" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Book_Id_Mis" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Slot_Id" type="xs:string"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Visit_Time" type="xs:dateTime"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Room" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Status">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Status_Code" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Comment" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Parameters" type="tns:ArrayOfParameter"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfParameter">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Parameter" type="tns:Parameter"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Parameter">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="Value" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CancelAppointmentRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Book_Id_Mis" type="xs:string"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Canceled_Reason" type="tns:Canceled_Reason"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Error_Data_Parameters" type="tns:ArrayOfValidation_Error_Type"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:simpleType name="Canceled_Reason">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="CANCELED_BY_PATIENT"/>
+                    <xs:enumeration value="ERROR_DATA_MIS"/>
+                    <xs:enumeration value="RECORD_NOT_CREATED_AT_EPGU"/>
+                    <xs:enumeration value="DATA_TRANSFER_ERROR_AT_EPGU"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="ArrayOfValidation_Error_Type">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Parameter" type="tns:Validation_Error_Type"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CancelAppointmentResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Book_Id_Mis" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Status_Code" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Comment" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReferralAppointmentInformationRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Book_Id_Mis" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Referral_Id" type="xs:string"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Appointment_Status" type="tns:Appointment_Status"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="MO_OID" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="MO_Name" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Resource_Name" type="xs:string"/>
+                        <xs:element minOccurs="1" maxOccurs="1" name="Visit_Time" type="xs:dateTime"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:simpleType name="Appointment_Status">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="RECORDED"/>
+                    <xs:enumeration value="CANCELED"/>
+                    <xs:enumeration value="SUCCESS"/>
+                    <xs:enumeration value="PATIENT_NOT_ARRIVED"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="ReferralAppointmentInformationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Book_Id_Mis" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Status_Code" type="xs:string"/>
+                        <xs:element minOccurs="0" maxOccurs="1" name="Comment" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="GetPatientInfoRequest1">
+        <wsdl:part name="GetPatientInfoRequest" element="tns:GetPatientInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetPatientInfoResponse1">
+        <wsdl:part name="GetPatientInfoResponse" element="tns:GetPatientInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="GetReferralInfoRequest1">
+        <wsdl:part name="GetReferralInfoRequest" element="tns:GetReferralInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetReferralInfoResponse1">
+        <wsdl:part name="GetReferralInfoResponse" element="tns:GetReferralInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="GetMOInfoExtendedRequest1">
+        <wsdl:part name="GetMOInfoExtendedRequest" element="tns:GetMOInfoExtendedRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetMOInfoExtendedResponse1">
+        <wsdl:part name="GetMOInfoExtendedResponse" element="tns:GetMOInfoExtendedResponse"/>
+    </wsdl:message>
+    <wsdl:message name="GetMOResourceInfoRequest1">
+        <wsdl:part name="GetMOResourceInfoRequest" element="tns:GetMOResourceInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetMOResourceInfoResponse1">
+        <wsdl:part name="GetMOResourceInfoResponse" element="tns:GetMOResourceInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="GetServicePostSpecsInfoRequest1">
+        <wsdl:part name="GetServicePostSpecsInfoRequest" element="tns:GetServicePostSpecsInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetServicePostSpecsInfoResponse1">
+        <wsdl:part name="GetServicePostSpecsInfoResponse" element="tns:GetServicePostSpecsInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="GetScheduleInfoRequest1">
+        <wsdl:part name="GetScheduleInfoRequest" element="tns:GetScheduleInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetScheduleInfoResponse1">
+        <wsdl:part name="GetScheduleInfoResponse" element="tns:GetScheduleInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="CreateAppointmentRequest1">
+        <wsdl:part name="CreateAppointmentRequest" element="tns:CreateAppointmentRequest"/>
+    </wsdl:message>
+    <wsdl:message name="CreateAppointmentResponse1">
+        <wsdl:part name="CreateAppointmentResponse" element="tns:CreateAppointmentResponse"/>
+    </wsdl:message>
+    <wsdl:message name="CancelAppointmentRequest1">
+        <wsdl:part name="CancelAppointmentRequest" element="tns:CancelAppointmentRequest"/>
+    </wsdl:message>
+    <wsdl:message name="CancelAppointmentResponse1">
+        <wsdl:part name="CancelAppointmentResponse" element="tns:CancelAppointmentResponse"/>
+    </wsdl:message>
+    <wsdl:message name="ReferralAppointmentInformationRequest1">
+        <wsdl:part name="ReferralAppointmentInformationRequest" element="tns:ReferralAppointmentInformationRequest"/>
+    </wsdl:message>
+    <wsdl:message name="ReferralAppointmentInformationResponse1">
+        <wsdl:part name="ReferralAppointmentInformationResponse" element="tns:ReferralAppointmentInformationResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="ErWebService">
+        <wsdl:operation name="GetPatientInfo">
+            <wsdl:input wsaw:Action="GetPatientInfo" name="GetPatientInfoRequest1" message="tns:GetPatientInfoRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/GetPatientInfoResponse" name="GetPatientInfoResponse1" message="tns:GetPatientInfoResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetReferralInfo">
+            <wsdl:input wsaw:Action="GetReferralInfo" name="GetReferralInfoRequest1" message="tns:GetReferralInfoRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/GetReferralInfoResponse" name="GetReferralInfoResponse1" message="tns:GetReferralInfoResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetMOInfoExtended">
+            <wsdl:input wsaw:Action="GetMOInfoExtended" name="GetMOInfoExtendedRequest1" message="tns:GetMOInfoExtendedRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/GetMOInfoExtendedResponse" name="GetMOInfoExtendedResponse1" message="tns:GetMOInfoExtendedResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetMOResourceInfo">
+            <wsdl:input wsaw:Action="GetMOResourceInfo" name="GetMOResourceInfoRequest1" message="tns:GetMOResourceInfoRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/GetMOResourceInfoResponse" name="GetMOResourceInfoResponse1" message="tns:GetMOResourceInfoResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetServicePostSpecsInfo">
+            <wsdl:input wsaw:Action="GetServicePostSpecsInfo" name="GetServicePostSpecsInfoRequest1" message="tns:GetServicePostSpecsInfoRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/GetServicePostSpecsInfoResponse" name="GetServicePostSpecsInfoResponse1" message="tns:GetServicePostSpecsInfoResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetScheduleInfo">
+            <wsdl:input wsaw:Action="GetScheduleInfo" name="GetScheduleInfoRequest1" message="tns:GetScheduleInfoRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/GetScheduleInfoResponse" name="GetScheduleInfoResponse1" message="tns:GetScheduleInfoResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="CreateAppointment">
+            <wsdl:input wsaw:Action="CreateAppointment" name="CreateAppointmentRequest1" message="tns:CreateAppointmentRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/CreateAppointmentResponse" name="CreateAppointmentResponse1" message="tns:CreateAppointmentResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="CancelAppointment">
+            <wsdl:input wsaw:Action="CancelAppointment" name="CancelAppointmentRequest1" message="tns:CancelAppointmentRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/CancelAppointmentResponse" name="CancelAppointmentResponse1" message="tns:CancelAppointmentResponse1"/>
+        </wsdl:operation>
+        <wsdl:operation name="ReferralAppointmentInformation">
+            <wsdl:input wsaw:Action="ReferralAppointmentInformation" name="ReferralAppointmentInformationRequest1" message="tns:ReferralAppointmentInformationRequest1"/>
+            <wsdl:output wsaw:Action="http://www.rt-eu.ru/med/er/v2_0/ErWebService/ReferralAppointmentInformationResponse" name="ReferralAppointmentInformationResponse1" message="tns:ReferralAppointmentInformationResponse1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BasicHttpBinding_ErWebService" type="tns:ErWebService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetPatientInfo">
+            <soap:operation soapAction="GetPatientInfo" style="document"/>
+            <wsdl:input name="GetPatientInfoRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetPatientInfoResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetReferralInfo">
+            <soap:operation soapAction="GetReferralInfo" style="document"/>
+            <wsdl:input name="GetReferralInfoRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetReferralInfoResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetMOInfoExtended">
+            <soap:operation soapAction="GetMOInfoExtended" style="document"/>
+            <wsdl:input name="GetMOInfoExtendedRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetMOInfoExtendedResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetMOResourceInfo">
+            <soap:operation soapAction="GetMOResourceInfo" style="document"/>
+            <wsdl:input name="GetMOResourceInfoRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetMOResourceInfoResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetServicePostSpecsInfo">
+            <soap:operation soapAction="GetServicePostSpecsInfo" style="document"/>
+            <wsdl:input name="GetServicePostSpecsInfoRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetServicePostSpecsInfoResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetScheduleInfo">
+            <soap:operation soapAction="GetScheduleInfo" style="document"/>
+            <wsdl:input name="GetScheduleInfoRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetScheduleInfoResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateAppointment">
+            <soap:operation soapAction="CreateAppointment" style="document"/>
+            <wsdl:input name="CreateAppointmentRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="CreateAppointmentResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelAppointment">
+            <soap:operation soapAction="CancelAppointment" style="document"/>
+            <wsdl:input name="CancelAppointmentRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="CancelAppointmentResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ReferralAppointmentInformation">
+            <soap:operation soapAction="ReferralAppointmentInformation" style="document"/>
+            <wsdl:input name="ReferralAppointmentInformationRequest1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="ReferralAppointmentInformationResponse1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Fer3NService_REGP">
+        <wsdl:port name="BasicHttpBinding_ErWebService" binding="tns:BasicHttpBinding_ErWebService">
+            <soap:address location="http://192.168.240.26:8749/ws/rosminzdrav/fer3N/erwebservice_regp"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

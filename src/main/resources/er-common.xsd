@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:er="http://www.rt-eu.ru/med/er/v2_0" targetNamespace="http://www.rt-eu.ru/med/er/v2_0" elementFormDefault="qualified" version="1.0">
+    <xsd:simpleType name="requiredString">
+        <xsd:annotation>
+            <xsd:documentation>Не пустая строка с нормализованными пробелами</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:whiteSpace value="collapse"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="Specialist_Param">
+        <xsd:sequence>
+            <xsd:element name="Last_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Фамилия специалиста
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="First_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Имя специалиста
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Middle_Name" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Отчество специалиста
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="SNILS">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        СНИЛС специалиста
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[0-9]{11}"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Post" type="er:Post">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Информация о должности специалиста
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Post">
+        <xsd:sequence>
+            <xsd:element name="Post_Id" type="xsd:integer">
+                <xsd:annotation>
+                    <xsd:documentation>Код должности медицинского работника</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Add_Info_Post" type="er:Add_Info_Post" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о должности, отсутствующей в справочнике</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Add_Info_Post">
+        <xsd:annotation>
+            <xsd:documentation>Информация о должности, отсутствующей в справочнике</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Inner_Id" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Внутренний идентификатор должности в МИС</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Inner_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Наименование должности в МИС</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Room_Param">
+        <xsd:sequence>
+            <xsd:element name="Room_OID">
+                <xsd:annotation>
+                    <xsd:documentation>OID кабинета</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[0-9]+(\.[0-9]+)+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Room_Number" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Номер кабинета</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Room_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Наименование кабинета</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Service">
+        <xsd:sequence>
+            <xsd:element name="Service_Id" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Код медицинской услуги</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Add_Info_Service" type="er:Add_Info_Service" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Информация об услуге, отсутствующей в справочнике.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Add_Info_Service">
+        <xsd:annotation>
+            <xsd:documentation>Информация об услуге, отсутствующей в справочнике.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Inner_Id" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Внутренний код медицинской услуги в МИС.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Inner_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Наименование медицинской услуги в МИС.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Services_Info">
+        <xsd:sequence>
+            <xsd:element name="Complex_Service_Name" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Наименование комплексной медицинской услуги.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Complex_Service_Id" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Внутренний идентификатор комплексной услуги в МИС.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Service" type="er:Service" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Информация об услуге.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MO_Base">
+        <xsd:sequence>
+            <xsd:element name="MO_Id" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Внутренний идентификатор структурного подразделения МО в МИС.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="MO_OID">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Единый уникальный идентификатор структурного подразделения медицинской организации (OID)
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[0-9]+(\.[0-9]+)+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="MO_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Наименование структурного подразделения МО</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MO_Param">
+        <xsd:annotation>
+            <xsd:documentation>Информация о структурном подразделении МО</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="er:MO_Base">
+                <xsd:sequence>
+                    <xsd:element name="MO_Address" type="er:requiredString">
+                        <xsd:annotation>
+                            <xsd:documentation>Адрес структурного подразделения МО.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="MO_Phone" type="er:requiredString" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>Контактный телефон структурного подразделения МО (регистратуры).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="Error_Type">
+        <xsd:annotation>
+            <xsd:documentation>Информация о возникшей ошибке</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Error_Code" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Код ошибки</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Error_Message" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Текстовое описание ошибки</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Validation_Error" type="er:Validation_Error_Type" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Ошибка проверки корректности входящих данных</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Validation_Error_Type">
+        <xsd:annotation>
+            <xsd:documentation>Ошибка проверки корректности входящих данных</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Message" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Подробное описание ошибки</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Path" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Путь к элементу</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Value" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Некорректные значения элемента</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Patient_Data">
+        <xsd:annotation>
+            <xsd:documentation>Личные данные гражданина</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="OMS_Number" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Номер полиса ОМС гражданина</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="16"/>
+                        <xsd:minLength value="6"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="OMS_Series" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Серия полиса ОМС гражданина</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="16"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="SNILS" type="er:SNILS" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>СНИЛС гражданина</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="First_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Имя гражданина</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Last_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Фамилия гражданина</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Middle_Name" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Отчество гражданина</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Birth_Date" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:documentation>Дата рождения гражданина</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Sex" type="er:Sex">
+                <xsd:annotation>
+                    <xsd:documentation>Пол гражданина</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Email" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>e-mail адрес заявителя</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Phone" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Телефон заявителя</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="Sex">
+        <xsd:annotation>
+            <xsd:documentation>Пол гражданина</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="F">
+                <xsd:annotation>
+                    <xsd:documentation>Женский</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="M">
+                <xsd:annotation>
+                    <xsd:documentation>Мужской</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="SNILS">
+        <xsd:annotation>
+            <xsd:documentation>СНИЛС в формате 11 слитных цифровых значений</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{11}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="Code">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EPGU">
+                <xsd:annotation>
+                    <xsd:documentation>ЕПГУ (Единый портал государственных услуг)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="REG">
+                <xsd:annotation>
+                    <xsd:documentation>Регистратура</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="INFOMAT">
+                <xsd:annotation>
+                    <xsd:documentation>Инфомат (Информационный терминал записи)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="RPGU">
+                <xsd:annotation>
+                    <xsd:documentation>РПГУ (Региональный портал государственных услуг)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="CC">
+                <xsd:annotation>
+                    <xsd:documentation>Кол-центр (единый центр телефонного обслуживания)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="MED_ARM">
+                <xsd:annotation>
+                    <xsd:documentation>АРМ медицинского работника</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="OTHER_WEB">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        любые другие приложения с возможностью записи на прием.
+                        Например, сайт МО, мобильное приложение
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="Parameters">
+        <xsd:annotation>
+            <xsd:documentation>Параметры</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="er:Parameter" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Параметр</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Parameter">
+        <xsd:annotation>
+            <xsd:documentation>Параметр</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Наименование параметра</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Value" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Значение параметра</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Status">
+        <xsd:annotation>
+            <xsd:documentation>Информация о статусе</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Status_Code" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Код</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Comment" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Комментарий</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Parameters" type="er:Parameters" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Параметры статуса</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="Canceled_Reason">
+        <xsd:annotation>
+            <xsd:documentation>Причина отмены записи</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CANCELED_BY_PATIENT">
+                <xsd:annotation>
+                    <xsd:documentation>Отмена записи гражданином.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="ERROR_DATA_MIS">
+                <xsd:annotation>
+                    <xsd:documentation>Ошибка в данных метода CreateAppointmentResponse.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="RECORD_NOT_CREATED_AT_EPGU">
+                <xsd:annotation>
+                    <xsd:documentation>Ошибка создания записи на ЕПГУ.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="DATA_TRANSFER_ERROR_AT_EPGU">
+                <xsd:annotation>
+                    <xsd:documentation>Ошибка передачи данных о записи на ЕПГУ.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
+

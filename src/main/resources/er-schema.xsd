@@ -1,0 +1,1043 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:er="http://www.rt-eu.ru/med/er/v2_0" targetNamespace="http://www.rt-eu.ru/med/er/v2_0" elementFormDefault="qualified" version="1.0">
+    <xsd:include schemaLocation="er-common.xsd"/>
+    <xsd:simpleType name="guid">
+        <xsd:annotation>
+            <xsd:documentation>Представление GUID</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="GetPatientInfoRequest">
+        <xsd:annotation>
+            <xsd:documentation>Идентификация гражданина</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Patient_Data" type="er:Patient_Data">
+                    <xsd:annotation>
+                        <xsd:documentation>Данные о гражданине</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Pass_referral" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Признак необходимости возврата перечня направлений гражданина
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:enumeration value="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>Не возвращать перечень направлений гражданина</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:enumeration>
+                            <xsd:enumeration value="1">
+                                <xsd:annotation>
+                                    <xsd:documentation>Необходимо вернуть перечень направлений гражданина(при наличии)
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:enumeration>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetPatientInfoResponse">
+        <xsd:annotation>
+            <xsd:documentation>Результат идентификации гражданина</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:sequence>
+                        <xsd:element name="Patient_Id" type="er:requiredString">
+                            <xsd:annotation>
+                                <xsd:documentation>Идентификатор гражданина в РМИС</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="Referrals" type="er:Referrals" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>Направления гражданина</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:element name="Error" type="er:Error_Type">
+                        <xsd:annotation>
+                            <xsd:documentation>Ошибка</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetReferralInfoRequest">
+        <xsd:annotation>
+            <xsd:documentation>Предоставление данных о направлениях гражданина по номеру направления</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Patient_Data" type="er:Patient_Data">
+                    <xsd:annotation>
+                        <xsd:documentation>Данные о гражданине</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Referral_Number" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Номер направления</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetReferralInfoResponse">
+        <xsd:annotation>
+            <xsd:documentation>Результат поиска направлений гражданина по номеру</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:sequence>
+                        <xsd:element name="Patient_Id" type="er:requiredString">
+                            <xsd:annotation>
+                                <xsd:documentation>Идентификатор гражданина в РМИС</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="Referrals" type="er:Referrals">
+                            <xsd:annotation>
+                                <xsd:documentation>Направления гражданина</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:element name="Error" type="er:Error_Type">
+                        <xsd:annotation>
+                            <xsd:documentation>Ошибка</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetMOInfoExtendedRequest">
+        <xsd:annotation>
+            <xsd:documentation>
+                Получение списка структурных подразделений МО, доступных пользователю для записи.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice minOccurs="0">
+                    <xsd:element name="Service_Posts" type="er:Service_Posts">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о должностях и услуге</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Service_Specialty" type="er:Service_Specialty">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о специальности и услуге</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetMOInfoExtendedResponse">
+        <xsd:annotation>
+            <xsd:documentation>Список структурных подразделений МО, доступных пользователю для записи
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:element name="MO_List">
+                        <xsd:annotation>
+                            <xsd:documentation>Список структурных подразделений МО</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="MO" type="er:MO_Param_Age" maxOccurs="unbounded">
+                                    <xsd:annotation>
+                                        <xsd:documentation>Параметры структурных подразделений МО</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Error" type="er:Error_Type">
+                        <xsd:annotation>
+                            <xsd:documentation>Ошибка</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="MO_Param_Age">
+        <xsd:annotation>
+            <xsd:documentation>Информация о структурном подразделении МО</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="er:MO_Param">
+                <xsd:sequence>
+                    <xsd:element name="Age_Group" type="er:requiredString" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о возрастных категориях граждан.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetMOResourceInfoRequest">
+        <xsd:annotation>
+            <xsd:documentation>
+                Получение данных о ресурсах МО
+                или по выбранному направлению в данной МИС;
+                или по направлению из другой МИС;
+                или по должности;
+                или по специальности.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:element name="Service_Posts" type="er:Service_Posts">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о должностях и услуге</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Service_Specialty" type="er:Service_Specialty">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о специальности и услуге</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+                <xsd:element name="MO_OID_List" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:annotation>
+                            <xsd:documentation>Список OID МО или структурных подразделений МО</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:sequence>
+                            <xsd:element name="MO_OID" maxOccurs="unbounded">
+                                <xsd:annotation>
+                                    <xsd:documentation>OID МО или структурного подразделения МО</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:pattern value="[0-9]+(\.[0-9]+)+"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Referral_Id" type="er:requiredString" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор направления в данном МИС</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Start_Date_Range" type="xsd:date">
+                    <xsd:annotation>
+                        <xsd:documentation>Дата начала периода выборки данных</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="End_Date_Range" type="xsd:date">
+                    <xsd:annotation>
+                        <xsd:documentation>Дата окончания периода выборки данных</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Referral" type="er:Param_Of_Referral" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Параметры направления из другого МИС</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Patient_Data" type="er:Patient_Data" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Личные данные гражданина</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetMOResourceInfoResponse">
+        <xsd:annotation>
+            <xsd:documentation>
+                Результат получения данных о ресурсах,
+                СП МО по выбранному направлению или должности специалиста / медицинской услуге
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:element name="MO_Resource_List" type="er:MO_Resource_List">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Информация о доступных структурных подразделениях МО и ресурсах
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Error" type="er:Error_Type">
+                        <xsd:annotation>
+                            <xsd:documentation>Ошибка</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetServicePostSpecsInfoRequest">
+        <xsd:annotation>
+            <xsd:documentation>
+                Запрос на получение списка должностей медицинских специалистов и медицинских услуг,
+                доступных гражданину в выбранном СП МО
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="MO_Id" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор структурного подразделения МО</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetServicePostSpecsInfoResponse">
+        <xsd:annotation>
+            <xsd:documentation>
+                Список должностей (специальностей) и медицинских услуг
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:element name="Service_Post_Specs" type="er:Service_Post_Specs">
+                        <xsd:annotation>
+                            <xsd:documentation>Список должностей (специальностей) и медицинских услуг
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Error" type="er:Error_Type">
+                        <xsd:annotation>
+                            <xsd:documentation>Ошибка</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetScheduleInfoRequest">
+        <xsd:annotation>
+            <xsd:documentation>Запрос на получение расписания приёма выбранного медицинского специалиста с указанием
+                доступного времени для записи на прием
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:element name="Specialist_SNILS" type="er:SNILS">
+                        <xsd:annotation>
+                            <xsd:documentation>СНИЛС специалиста</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Room_OID" type="er:requiredString">
+                        <xsd:annotation>
+                            <xsd:documentation>OID кабинета</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+                <xsd:element name="MO_OID" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>OID структурного подразделения МО</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice minOccurs="0">
+                    <xsd:element name="Service_Post" type="er:Service_Post">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о должности и услуге</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Service_Specialty" type="er:Service_Specialty">
+                        <xsd:annotation>
+                            <xsd:documentation>Информация о специальности и услуге</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+                <xsd:element name="Referral_Id" type="er:requiredString" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор направления</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Start_Date_Range" type="xsd:date">
+                    <xsd:annotation>
+                        <xsd:documentation>Дата, с которой необходимо начать формировать расписание
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="End_Date_Range" type="xsd:date">
+                    <xsd:annotation>
+                        <xsd:documentation>Дата, по которую необходимо формировать расписание</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Start_Time_Range" type="xsd:time">
+                    <xsd:annotation>
+                        <xsd:documentation>Время, с которого необходимо формировать расписание</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="End_Time_Range" type="xsd:time">
+                    <xsd:annotation>
+                        <xsd:documentation>Время, по которое необходимо формировать расписание</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetScheduleInfoResponse">
+        <xsd:annotation>
+            <xsd:documentation>Расписание приема и свободного времени для записи на прием выбранного ресурса
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice>
+                    <xsd:element name="Schedule">
+                        <xsd:annotation>
+                            <xsd:documentation>Расписание ресурса</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Slots" maxOccurs="unbounded">
+                                    <xsd:annotation>
+                                        <xsd:documentation>Параметры слотов</xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="Slot_Id" type="er:guid">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>Идентификатор слота</xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:element>
+                                            <xsd:element name="VisitTime">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>Дата и Время приема</xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                    <xsd:restriction base="xsd:dateTime">
+                                                        <xsd:pattern value="\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d"/>
+                                                    </xsd:restriction>
+                                                </xsd:simpleType>
+                                            </xsd:element>
+                                            <xsd:element name="Room" type="er:requiredString" minOccurs="0">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>Номер кабинета</xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:element>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Error" type="er:Error_Type">
+                        <xsd:annotation>
+                            <xsd:documentation>Ошибка</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CreateAppointmentRequest">
+        <xsd:annotation>
+            <xsd:documentation>Запрос на запись пользователя на прием</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Slot_Id" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор слота</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CreateAppointmentResponse">
+        <xsd:annotation>
+            <xsd:documentation>Результат создания записи на прием к врачу</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Session_ID" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор сессии</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Book_Id_Mis" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор записи на прием в РМИС</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Status" type="er:Status">
+                    <xsd:annotation>
+                        <xsd:documentation>Информация о статусе записи</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Slot_Id" type="er:guid">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор слота</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Visit_Time" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:documentation>Дата и Время приема</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Room" type="er:requiredString" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Номер кабинета</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CancelAppointmentRequest">
+        <xsd:annotation>
+            <xsd:documentation>Запрос на отмену записи пользователя на прием</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Book_Id_Mis" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор записи на прием в МИС.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Canceled_Reason" type="er:Canceled_Reason">
+                    <xsd:annotation>
+                        <xsd:documentation>Причина отмены записи.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Error_Data_Parameters" type="er:Error_Data_Parameters" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Наименование параметра при записи, в котором обнаружены ошибки МИС
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CancelAppointmentResponse">
+        <xsd:annotation>
+            <xsd:documentation>Результат отмены записи на прием к врачу</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Book_Id_Mis" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор записи на прием в МИС</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Status_Code" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Код статуса отмены</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Comment" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Состояние статуса отмены</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ReferralAppointmentInformationRequest">
+        <xsd:annotation>
+            <xsd:documentation>Запрос на оповещение МИС - источника направления, о создание записи в другом МИС
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Book_Id_Mis" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор записи в РМИС</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Referral_Id" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор направления</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Appointment_Status" type="er:Appointment_Status">
+                    <xsd:annotation>
+                        <xsd:documentation>Код статуса заявления</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="MO_OID" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>OID структурного подразделения МО, в которое записался гражданин по
+                            направлению
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="MO_Name" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Наименование структурного подразделения МО, в которое записался гражданин по
+                            направлению
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Resource_Name" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>ФИО медицинского работника, к которому записался гражданин
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Visit_Time" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:documentation>Дата и время приема</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ReferralAppointmentInformationResponse">
+        <xsd:annotation>
+            <xsd:documentation>Ответ на запрос на оповещение МИС - источника направления, о создание записи в другом МИС
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Book_Id_Mis" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Идентификатор записи МИС</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Status_Code" type="er:requiredString">
+                    <xsd:annotation>
+                        <xsd:documentation>Код статуса получения информации</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Comment" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Комментарий</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="Appointment_Status">
+        <xsd:annotation>
+            <xsd:documentation>Код статуса заявления</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="RECORDED">
+                <xsd:annotation>
+                    <xsd:documentation>гражданин записан</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="CANCELED">
+                <xsd:annotation>
+                    <xsd:documentation>Запись отменена</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="SUCCESS">
+                <xsd:annotation>
+                    <xsd:documentation>Услуга оказана</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="PATIENT_NOT_ARRIVED">
+                <xsd:annotation>
+                    <xsd:documentation>гражданин не явился</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="Referrals">
+        <xsd:annotation>
+            <xsd:documentation>Направления гражданина</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Referral" type="er:Param_Of_Referral" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Параметры направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Param_Of_Referral">
+        <xsd:annotation>
+            <xsd:documentation>Направления гражданина</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Referral_Id" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Идентификатор направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Referral_Number" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>Номер направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Referral_Type" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:documentation>Тип направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Referral_Start_Date" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:documentation>Дата выдачи направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Referral_End_Date" type="xsd:date" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Дата окончания действия направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Payment_Source_Id" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:documentation>Код источника оплаты</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="To_MO_OID" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        OID МО или структурного подразделения МО, в которое выдано направление.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:choice>
+                <xsd:element name="To_Service_Post" type="er:Service_Post">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Информация о должности и услуге, на которую выдано направление.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="To_Service_Specialty" type="er:Service_Specialty">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Информация о специальности и услуге, на которую выдано направление
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:element name="To_Resource_Name" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>ФИО медицинского работника, к которому выдано направление
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="To_Resource_Snils" type="er:SNILS" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>СНИЛС врача, к которому выдано направление</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Desease" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Код диагноза по МКБ-10</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Note" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Обоснование направления</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="From_MO_OID" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>OID структурного подразделения МО, выдавшее направление
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="From_Post" type="er:Post">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о должности медицинского работника, выдавшего направление
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="From_Resource_Name" type="er:requiredString">
+                <xsd:annotation>
+                    <xsd:documentation>ФИО медицинского работника, выдавшего направление</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="From_Resource_Snils" type="er:SNILS">
+                <xsd:annotation>
+                    <xsd:documentation>СНИЛС медицинского работника, выдавшего направление</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Available_Record" type="er:Available_Record">
+                <xsd:annotation>
+                    <xsd:documentation>Доступность записи по направлению</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Reason_Not_Available" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Причина недоступности записи по направлению</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Service_Post">
+        <xsd:annotation>
+            <xsd:documentation>Информация о должности и оказываемой услуге.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Post" type="er:Post">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о должности медицинского работника.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Services_Info" type="er:Services_Info" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Информация об услугах.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Service_Specialty">
+        <xsd:annotation>
+            <xsd:documentation>Информация о специальности и оказываемой услуге</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Specialty_Id" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:documentation>Код специальности медицинского работника.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Services_Info" type="er:Services_Info">
+                <xsd:annotation>
+                    <xsd:documentation>Информация об услугах.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Service_Posts">
+        <xsd:annotation>
+            <xsd:documentation>Информация о должностях и оказываемой услуге</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Post" type="er:Post" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о должности медицинского работника</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Services_Info" type="er:Services_Info" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Информация об услугах</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Service_Post_Specs">
+        <xsd:annotation>
+            <xsd:documentation>Список должностей (специальностей) и медицинских услуг</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice maxOccurs="unbounded">
+                <xsd:element name="Service_Post" type="er:Service_Post">
+                    <xsd:annotation>
+                        <xsd:documentation>Информация о должности и услуге</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Service_Specialty" type="er:Service_Specialty">
+                    <xsd:annotation>
+                        <xsd:documentation>Информация о специальности и услуге</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="Available_Record">
+        <xsd:annotation>
+            <xsd:documentation>Доступность записи по направлению</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="er:requiredString">
+            <xsd:enumeration value="AVAILABLE">
+                <xsd:annotation>
+                    <xsd:documentation>доступна запись по направлению на ЕПГУ</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="AVAILABLE_ONLY_RECEPTION">
+                <xsd:annotation>
+                    <xsd:documentation>доступна запись по направлению только в регистратуре медицинской организации
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="AVAILABLE_ONLY_DOCTOR">
+                <xsd:annotation>
+                    <xsd:documentation>доступна запись по направлению только у врача</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="NO_APPOINTMENT">
+                <xsd:annotation>
+                    <xsd:documentation>прием без записи</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="UNAVAILABLE">
+                <xsd:annotation>
+                    <xsd:documentation>недоступна запись по направлению</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="MO_Resource_List">
+        <xsd:annotation>
+            <xsd:documentation>Информация о доступных структурных подразделениях МО и ресурсах</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="MO_Available" type="er:MO_Available" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Информация о структурном подразделении МО и доступных для записи ресурсах
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MO_Available">
+        <xsd:annotation>
+            <xsd:documentation>
+                Информация о структурном подразделении МО и доступных для записи ресурсах
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="MO" type="er:MO_Param_Age">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о структурном подразделении МО</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Resource_Available" type="er:Resource_Available">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о доступных для записи ресурсах</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Resource_Available">
+        <xsd:annotation>
+            <xsd:documentation>Информация о доступных для записи ресурсах</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Resource" type="er:Resource_Param" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о ресурсе</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Resource_Param">
+        <xsd:annotation>
+            <xsd:documentation>Информация о ресурсе</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="Specialist" type="er:Specialist_Param">
+                    <xsd:annotation>
+                        <xsd:documentation>Информация о медицинском специалисте</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Room" type="er:Room_Param">
+                    <xsd:annotation>
+                        <xsd:documentation>Информация о кабинете</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:element name="Available_Dates" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Список доступных для записи дат</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Available_Date" type="xsd:dateTime" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>Доступная для записи дата/время</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Age_Group" type="er:requiredString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о возрастных категориях граждан</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Error_Data_Parameters">
+        <xsd:annotation>
+            <xsd:documentation>Наименование параметра при записи, в котором обнаружены ошибки МИС</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="er:Validation_Error_Type" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Информация о параметре, переданном некорректно</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
