@@ -1,8 +1,8 @@
-package ru.hostco.camel.proxy.proxy.aggregation;
+package ru.hostco.camel.proxy.aggregation;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import ru.hostco.camel.proxy.proxy.token.GenerateToken;
+import ru.hostco.camel.proxy.token.GenerateToken;
 import ru.rt_eu.med.er.v2_0.GetPatientInfoResponse;
 
 import javax.xml.bind.JAXBContext;

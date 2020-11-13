@@ -1,4 +1,4 @@
-package ru.hostco.camel.proxy.proxy.config;
+package ru.hostco.camel.proxy.config;
 
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;

@@ -1,11 +1,11 @@
-package ru.hostco.camel.proxy.proxy.route;
+package ru.hostco.camel.proxy.route;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.springframework.stereotype.Component;
-import ru.hostco.camel.proxy.proxy.aggregation.GetPatientAggregation;
+import ru.hostco.camel.proxy.aggregation.GetPatientAggregation;
 
 /**
  * Класс маршрутизатор

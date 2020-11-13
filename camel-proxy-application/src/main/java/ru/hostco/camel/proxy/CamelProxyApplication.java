@@ -1,4 +1,4 @@
-package ru.hostco.camel.proxy.proxy;
+package ru.hostco.camel.proxy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

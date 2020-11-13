@@ -1,4 +1,4 @@
-package ru.hostco.camel.proxy.proxy.route;
+package ru.hostco.camel.proxy.route;
 
 import org.springframework.stereotype.Component;
 import ru.rt_eu.med.er.v2_0.*;

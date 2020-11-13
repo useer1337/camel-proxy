@@ -1,4 +1,4 @@
-package ru.hostco.camel.proxy.proxy.token;
+package ru.hostco.camel.proxy.token;
 
 import java.security.SecureRandom;
 import java.util.Base64;
