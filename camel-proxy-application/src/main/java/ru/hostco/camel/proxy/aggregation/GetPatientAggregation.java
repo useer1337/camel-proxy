@@ -1,25 +1,42 @@
 package ru.hostco.camel.proxy.aggregation;
 
-import org.apache.camel.AggregationStrategy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.hostco.camel.proxy.entities.MisAddress;
+import ru.hostco.camel.proxy.entities.TemporaryToken;
+import ru.hostco.camel.proxy.repository.MisAddressRepository;
+import ru.hostco.camel.proxy.repository.TemporaryTokenRepository;
 import ru.hostco.camel.proxy.token.GenerateToken;
 import ru.rt_eu.med.er.v2_0.GetPatientInfoResponse;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.ArrayList;
-import java.util.List;
+import static ru.hostco.camel.proxy.util.UnMarshall.unmarshall;
 
 /**
  * Класс котороый аггрегирует респонсы полученные от метода GetPatientInfo
- *
  */
+@Slf4j
+@Component
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class GetPatientAggregation implements AggregationStrategy {
-    private GetPatientInfoResponse generatedResponse;
-    private String token;
-    private GenerateToken generateToken = GenerateToken.getInstance();
+    private final MisAddressRepository misAddressRepository;
+    private final TemporaryTokenRepository temporaryTokenRepository;
+
+    // private String token;
+    // private String patientId;
 
     /**
      * Метод агреграции
@@ -29,74 +46,99 @@ public class GetPatientAggregation implements AggregationStrategy {
      * @return возвращает контейнер сообщений
      */
     @Override
-    public Exchange aggregate(Exchange oldExchange, Exchange newExchange){
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+
+        log.info("Aggregation responses GetPatientInfoResponse");
 
         GetPatientInfoResponse receivedResponse = null;
 
-        // Размаршаливаем респнсе который пришел
-        try {
-            receivedResponse = unmarshalResponse(newExchange.getIn().getBody(String.class));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        String charsetEncoding = newExchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
+        String message = newExchange.getIn().getBody(String.class);
 
-        if (oldExchange == null) {
-            token = generateToken.generateNewToken();
-            generatedResponse = new GetPatientInfoResponse();
 
-             addPatientIdToMap(receivedResponse);
 
-            generatedResponse.setSessionID(receivedResponse.getSessionID());
-            generatedResponse.setPatientId(token);
-            newExchange.getIn().setBody(generatedResponse);
-            return newExchange;
-        }
+        return newExchange;
 
-        addPatientIdToMap(receivedResponse);
 
-        return oldExchange;
 
+//        // Размаршаливаем респнсе который пришел
+//        try {
+//            receivedResponse = (GetPatientInfoResponse) unmarshall(newExchange.getIn().getBody(String.class));
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
+//        }
+//
+//
+//        if (oldExchange == null) {
+//
+//            patientId = receivedResponse.getPatientId();
+//
+//            if (patientId == null)
+//                return newExchange;
+//
+//            addPatientIdToMap(patientId);
+//
+//            GetPatientInfoResponse generatedResponse = new GetPatientInfoResponse();
+//            generatedResponse.setSessionID(receivedResponse.getSessionID());
+//            generatedResponse.setPatientId(token);
+//            newExchange.getIn().setBody(generatedResponse);
+//            return newExchange;
+//        }
+//
+//        if( patientId == null)
+//            return oldExchange;
+//
+//        addPatientIdToMap(patientId);
+//
+//        return oldExchange;
     }
 
+//    private void addPatientIdToMap(String patientId) {
+//
+//        // Проверка на токен
+//        if (token == null)
+//            token = generateNewToken();
+//
+//        // Добавляем patientId в map
+//        if (!GenerateToken.getInstance().getTokenMap().containsKey(token)) {
+//            Map<String, String> map = new HashMap<>();
+//            map.put(patientId, "path");
+//            GenerateToken.getInstance().getTokenMap().put(token, map);
+//        } else {
+//            GenerateToken.getInstance().getTokenMap().get(token).put(patientId, "path");
+//        }
+//    }
 
     /**
      * Метод добавления patientId в map
      *
      * @param response ответ в котором содержиться patientId
      */
-    private void addPatientIdToMap(GetPatientInfoResponse response) {
+    private void addPatientIdToDB(GetPatientInfoResponse response, String uri, String token) {
 
-        // Добавляем patientId в map
-        if (!generateToken.getTokenMap().containsKey(token)) {
-            List<String> tokenList = new ArrayList<>();
+        MisAddress misAddress = misAddressRepository.findByAddressName(uri);
 
-            String patientId = response.getPatientId();
-            if (patientId != null)
-                tokenList.add(response.getPatientId());
-
-            generateToken.getTokenMap().put(token, tokenList);
-
-        } else {
-            String patientId = response.getPatientId();
-            if (patientId != null)
-                generateToken.getTokenMap().get(token).add(patientId);
+        String patientId = response.getPatientId();
+        if (patientId != null) {
+            TemporaryToken temporaryToken = new TemporaryToken();
+            temporaryToken.setToken(token);
+            temporaryToken.setPatientId(patientId);
+            temporaryToken.getMisAddresses().add(misAddress);
+            temporaryTokenRepository.save(temporaryToken);
         }
-
     }
 
     /**
-     * Метод размаршаливания ответа из string в GetPatientInfoResponse
+     * Метод генерирует токены
      *
-     * @param response строка содержащая ответ
-     * @return обьект класса GetPatientInfoResponse
+     * @return сгенерированный токен
      */
-    private GetPatientInfoResponse unmarshalResponse(String response) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(GetPatientInfoResponse.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+    public String generateNewToken() {
+        SecureRandom secureRandom = new SecureRandom();
+        Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
-        StringReader reader = new StringReader(response);
-        GetPatientInfoResponse getPatientInfoResponse = (GetPatientInfoResponse) unmarshaller.unmarshal(reader);
-
-        return getPatientInfoResponse;
+        byte[] randomBytes = new byte[24];
+        secureRandom.nextBytes(randomBytes);
+        return base64Encoder.encodeToString(randomBytes);
     }
 }

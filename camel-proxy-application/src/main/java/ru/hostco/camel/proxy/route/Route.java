@@ -1,37 +1,44 @@
 package ru.hostco.camel.proxy.route;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.jaxb.JaxbDataFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import ru.hostco.camel.proxy.aggregation.GetPatientAggregation;
+import ru.hostco.camel.proxy.token.GenerateToken;
 
 /**
  * Класс маршрутизатор
- *
  */
 @Component
 public class Route extends RouteBuilder {
 
+    private final ApplicationContext context;
+
+    @Autowired
+    public Route(ApplicationContext context) {
+        this.context = context;
+    }
+
     @Override
     public void configure() throws Exception {
-        JaxbDataFormat jaxb = new JaxbDataFormat("ru.rt_eu.med.er.v2_0");
 
         // Ендпоинт куда приходит запрос от клинетов
-        // ЗДЕСЬ ЕСТЬ ЛОГГИРОВАНИЕ!!!
-        from("spring-ws:uri:http://localhost:8081/api?endpointMapping=#endpointMapping")
+        from("servlet:/?matchOnUriPrefix=true")
                 .log(LoggingLevel.INFO, "Get request for endpoint")
-                .setExchangePattern(ExchangePattern.InOut)
-                .unmarshal(jaxb)
-                .recipientList(method("requestRouter", "routeRequest"))
+                .recipientList(method("requestRouter", "routeTo"))
                 .log(LoggingLevel.INFO, "Route request to end service");
 
         // Конечная точка в которой реализованна логика для GetPatient метода
         from("direct:GetPatientInfo")
                 .setExchangePattern(ExchangePattern.InOut)
-                .recipientList(constant("spring-ws:http://t-ovis-soapui.hostco.ru:8099/mockBasicHttpBinding_ErWebService," +
-                        "spring-ws:http://p-ovis-psserv-2.hostco.ru:8080/FerIntegration/services/FerIntegration"))
-                .aggregationStrategy(new GetPatientAggregation());
+                .recipientList(simple(
+                        "http://localhost:8088/hi?bridgeEndpoint=true&throwExceptionOnFailure=false," +
+                                "http://${in.header.url_komtek}?bridgeEndpoint=true&throwExceptionOnFailure=false"))
+                .aggregationStrategy(context.getBean("getPatientAggregation", GetPatientAggregation.class));
     }
 }
