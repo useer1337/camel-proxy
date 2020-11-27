@@ -6,23 +6,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.hostco.camel.proxy.entities.MisAddress;
-import ru.hostco.camel.proxy.entities.TemporaryToken;
-import ru.hostco.camel.proxy.repository.MisAddressRepository;
-import ru.hostco.camel.proxy.repository.TemporaryTokenRepository;
-import ru.hostco.camel.proxy.token.GenerateToken;
+import ru.hostco.camel.proxy.entities.PatientIdData;
+import ru.hostco.camel.proxy.entities.Token;
+import ru.hostco.camel.proxy.repository.PatientIdDataRepository;
+import ru.hostco.camel.proxy.repository.TokenRepository;
 import ru.rt_eu.med.er.v2_0.GetPatientInfoResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static ru.hostco.camel.proxy.util.Marshall.marshall;
 import static ru.hostco.camel.proxy.util.UnMarshall.unmarshall;
 
 /**
@@ -32,11 +27,8 @@ import static ru.hostco.camel.proxy.util.UnMarshall.unmarshall;
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class GetPatientAggregation implements AggregationStrategy {
-    private final MisAddressRepository misAddressRepository;
-    private final TemporaryTokenRepository temporaryTokenRepository;
-
-    // private String token;
-    // private String patientId;
+    private final PatientIdDataRepository patientIdDataRepository;
+    private final TokenRepository tokenRepository;
 
     /**
      * Метод агреграции
@@ -47,86 +39,67 @@ public class GetPatientAggregation implements AggregationStrategy {
      */
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        try {
 
-        log.info("Aggregation responses GetPatientInfoResponse");
+            log.info("Aggregation responses GetPatientInfoResponse");
+            GetPatientInfoResponse receivedResponse = null;
 
-        GetPatientInfoResponse receivedResponse = null;
+            receivedResponse = (GetPatientInfoResponse) unmarshall(newExchange.getIn().getBody(String.class));
 
-        String charsetEncoding = newExchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
-        String message = newExchange.getIn().getBody(String.class);
-
-
-
-        return newExchange;
+            if (receivedResponse.getPatientId() == null)
+                throw new Exception();
 
 
+            String camelUri = (String) newExchange.getProperty("CamelRecipientListEndpoint");
+            String uri = camelUri.split("\\/\\/")[1].split("\\?")[0];
 
-//        // Размаршаливаем респнсе который пришел
-//        try {
-//            receivedResponse = (GetPatientInfoResponse) unmarshall(newExchange.getIn().getBody(String.class));
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//        }
-//
-//
-//        if (oldExchange == null) {
-//
-//            patientId = receivedResponse.getPatientId();
-//
-//            if (patientId == null)
-//                return newExchange;
-//
-//            addPatientIdToMap(patientId);
-//
-//            GetPatientInfoResponse generatedResponse = new GetPatientInfoResponse();
-//            generatedResponse.setSessionID(receivedResponse.getSessionID());
-//            generatedResponse.setPatientId(token);
-//            newExchange.getIn().setBody(generatedResponse);
-//            return newExchange;
-//        }
-//
-//        if( patientId == null)
-//            return oldExchange;
-//
-//        addPatientIdToMap(patientId);
-//
-//        return oldExchange;
-    }
+            // Создаем собственный ответ
+            addPatientIdToDB(receivedResponse, uri);
+            GetPatientInfoResponse generatedResponse = generateResponse(receivedResponse);
 
-//    private void addPatientIdToMap(String patientId) {
-//
-//        // Проверка на токен
-//        if (token == null)
-//            token = generateNewToken();
-//
-//        // Добавляем patientId в map
-//        if (!GenerateToken.getInstance().getTokenMap().containsKey(token)) {
-//            Map<String, String> map = new HashMap<>();
-//            map.put(patientId, "path");
-//            GenerateToken.getInstance().getTokenMap().put(token, map);
-//        } else {
-//            GenerateToken.getInstance().getTokenMap().get(token).put(patientId, "path");
-//        }
-//    }
+            newExchange.getOut().setBody(marshall(generatedResponse));
 
-    /**
-     * Метод добавления patientId в map
-     *
-     * @param response ответ в котором содержиться patientId
-     */
-    private void addPatientIdToDB(GetPatientInfoResponse response, String uri, String token) {
+            return newExchange;
 
-        MisAddress misAddress = misAddressRepository.findByAddressName(uri);
-
-        String patientId = response.getPatientId();
-        if (patientId != null) {
-            TemporaryToken temporaryToken = new TemporaryToken();
-            temporaryToken.setToken(token);
-            temporaryToken.setPatientId(patientId);
-            temporaryToken.getMisAddresses().add(misAddress);
-            temporaryTokenRepository.save(temporaryToken);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return newExchange;
         }
     }
+
+    private GetPatientInfoResponse generateResponse(GetPatientInfoResponse receivedResponse) {
+        GetPatientInfoResponse generatedResponse = new GetPatientInfoResponse();
+        generatedResponse.setSessionID(receivedResponse.getSessionID());
+
+        Token token = tokenRepository.findBySession(receivedResponse.getSessionID()).get();
+
+        generatedResponse.setPatientId(token.getValue());
+        return generatedResponse;
+    }
+
+
+    private void addPatientIdToDB(GetPatientInfoResponse response, String uri) {
+
+        Token token = null;
+
+        if (!tokenRepository.findBySession(response.getSessionID()).isPresent())
+        {
+            token = new Token();
+            token.setValue(generateNewToken());
+            token.setSession(response.getSessionID());
+            tokenRepository.save(token);
+        }else{
+            token = tokenRepository.findBySession(response.getSessionID()).get();
+        }
+
+        PatientIdData patientIdData = new PatientIdData();
+        patientIdData.setValue(response.getPatientId());
+        patientIdData.setAddress(uri);
+        patientIdData.setToken(token);
+
+        patientIdDataRepository.save(patientIdData);
+    }
+
 
     /**
      * Метод генерирует токены

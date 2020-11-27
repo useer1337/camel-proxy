@@ -32,23 +32,22 @@ public class RequestRouter {
     public String routeTo(String xml, Exchange exchange) throws Exception {
         HttpServletRequest httpServletRequest = exchange.getIn().getBody(HttpServletRequest.class);
         String ip = httpServletRequest.getRemoteAddr();
-
         String route = "";
-
         Object request = unmarshall(xml);
 
+        ClientConfiguration clientConfiguration = applicationConfiguration.getClient()
+                .stream().filter(clientConfiguration1 -> clientConfiguration1.getIpAddress().equals(ip)).findFirst().get();
+
         if (request instanceof GetPatientInfoRequest) {
-            ClientConfiguration clientConfiguration = applicationConfiguration.getClient()
-                    .stream().filter(clientConfiguration1 -> clientConfiguration1.getIpAddress().equals(ip)).findFirst().get();
 
             Map<String, Object> map = new HashMap<>();
             map.put("url_vitakor", clientConfiguration.getUrlVitakor());
             map.put("url_komtek", clientConfiguration.getUrlKomtek());
             exchange.getIn().setHeaders(map);
-            route = "direct:GetPatientInfo";
+            return "direct:GetPatientInfo";
         }
 
-        return route;
+        return "jetty:http://" + clientConfiguration.getUrlVitakor() + "?bridgeEndpoint=true&throwExceptionOnFailure=false";
     }
 
 }

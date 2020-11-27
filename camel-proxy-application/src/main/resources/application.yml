@@ -4,9 +4,13 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/camel_proxy_db
-    username: camel_proxy
+    url: jdbc:postgresql://localhost:5432/camel_db
+    username: cameluser
     password: 123
+  flyway:
+    user: cameluser
+    password: 123
+    url: jdbc:postgresql://localhost:5432/camel_db
   jpa:
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
 
@@ -19,8 +23,8 @@ camel:
 clients:
   client[0]:
     ipAddress: 127.0.0.1
-    urlVitakor: localhost:8088/mockBasicHttpBinding_ErWebService
-    urlKomtek: p-ovis-psserv-2.hostco.ru:8080/FerIntegration/services/FerIntegration
+    urlVitakor: localhost:8088/hi
+    urlKomtek: localhost:8089/hi1
   client[1]:
     ipAddress: 127.0.0.2
     urlVitakor: localhost:8081/

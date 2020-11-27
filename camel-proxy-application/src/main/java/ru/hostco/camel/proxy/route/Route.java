@@ -1,15 +1,12 @@
 package ru.hostco.camel.proxy.route;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import ru.hostco.camel.proxy.aggregation.GetPatientAggregation;
-import ru.hostco.camel.proxy.token.GenerateToken;
 
 /**
  * Класс маршрутизатор
@@ -29,6 +26,7 @@ public class Route extends RouteBuilder {
 
         // Ендпоинт куда приходит запрос от клинетов
         from("servlet:/?matchOnUriPrefix=true")
+                .setExchangePattern(ExchangePattern.InOut)
                 .log(LoggingLevel.INFO, "Get request for endpoint")
                 .recipientList(method("requestRouter", "routeTo"))
                 .log(LoggingLevel.INFO, "Route request to end service");
@@ -37,8 +35,8 @@ public class Route extends RouteBuilder {
         from("direct:GetPatientInfo")
                 .setExchangePattern(ExchangePattern.InOut)
                 .recipientList(simple(
-                        "http://localhost:8088/hi?bridgeEndpoint=true&throwExceptionOnFailure=false," +
-                                "http://${in.header.url_komtek}?bridgeEndpoint=true&throwExceptionOnFailure=false"))
+                        "jetty:http://${in.header.url_vitakor}?bridgeEndpoint=true&throwExceptionOnFailure=false," +
+                                "jetty:http://${in.header.url_komtek}?bridgeEndpoint=true&throwExceptionOnFailure=false"))
                 .aggregationStrategy(context.getBean("getPatientAggregation", GetPatientAggregation.class));
     }
 }
